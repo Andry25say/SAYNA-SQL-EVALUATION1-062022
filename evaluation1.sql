@@ -144,12 +144,12 @@ INSERT INTO livres VALUES
 (31,'FOLIO',17),
 (32,'GALLIMARD',18);
 /* 2022-06-27 13:13:31 [117 ms] */ 
-INSERT INTO ex VALUES 
+INSERT INTO emprunter VALUES 
 (1,from_days(to_days(current_date)-350),21,from_days(to_days(current_date)-349),26),
 (4,from_days(to_days(current_date)-323),21,from_days(to_days(current_date)-310),4),
-(26,from_days(to_days(current_date)-315),21,from_days(to_days(current_date)-318),9),
-(25,from_days(to_days(current_date)-311),21,from_days(to_days(current_date)-293),1),
-(12,from_days(to_days(current_date)-300),21,from_days(to_days(current_date)-1290),7),
+(26,from_days(to_days(current_date)-318),21,from_days(to_days(current_date)-315),9),
+(25,from_days(to_days(current_date)-293),21, from_days(to_days(current_date)-311),1),
+(12,from_days(to_days(current_date)-300),21,from_days(to_days(current_date) -1290),7),
 (20,from_days(to_days(current_date)-283),21,from_days(to_days(current_date)-282),27),
 (10,from_days(to_days(current_date)-273),21,from_days(to_days(current_date)-250),7),
 (4,from_days(to_days(current_date)-232),14,from_days(to_days(current_date)-228),12),
@@ -178,6 +178,22 @@ INSERT INTO ex VALUES
 (31,from_days(to_days(current_date)-1),14, NULL,20),
 (21,from_days(to_days(current_date)-1),14, NULL,20),
 (32,from_days(to_days(current_date)-1),14, NULL,20);
+
+/*2. Correction des erreurs : expliquer les corrections que vous apportez.*/
+UPDATE emprunter SET dateEmp = from_days(to_days(current_date) -1290),
+dateRet = from_days(to_days(current_date)-300)
+where NL= 12;
+UPDATE emprunter SET dateEmp = from_days(to_days(current_date)-318),
+dateRet = from_days(to_days(current_date)-315)
+where NL= 26;
+
+/*3. Nombres des tuples dans la table résultat de la requête suivante juste
+après exécution du script de création des tables et des tuples.*/
+
+
+
+
+
 /*6. les livres actuellement empruntés*/ 
 SELECT  distinct titre FROM biblio.oeuvres, biblio.emprunter,biblio.livres 
 WHERE  livres.NO = oeuvres.NO and  livres.NL = emprunter.NL and emprunter.dateRet is null;
@@ -280,3 +296,34 @@ GROUP BY nom,prenom;
 SELECT COUNT(*),auteur FROM livres L, emprunter E,oeuvres O
 where L.NL = E.NL and L.NO = O.NO
 GROUP BY auteur;
+
+SELECT COUNT(*),editeur FROM livres L, emprunter E,oeuvres O
+where L.NL = E.NL and L.NO = O.NO
+GROUP BY editeur;
+
+
+/*22.Durée moyenne des emprunts rendus. On commencera par afficher les durées
+des emprunts rendus.*/
+
+Select NL,dateEmp, dateRet,(to_days(dateRet)-to_days(dateEmp)) 
+dureeMax
+From emprunter 
+Where dateRet is not null 
+Order by dateEmp; 
+
+select avg((to_days(dateRet)-to_days(dateEmp))) as durrMER
+from emprunter
+WHERE dateRet is not null;
+
+
+/*23.Durée moyenne des retards pour l’ensemble des emprunts.*/
+select AVG(datediff(dateRet,dateEmp)) AS durMoy,NL FROM emprunter;
+
+
+/*24.Durée moyenne des retards parmi les seuls retardataires*/
+
+
+
+
+
+
