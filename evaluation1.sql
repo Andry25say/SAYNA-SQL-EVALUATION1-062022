@@ -1,31 +1,9 @@
--- Active: 1656402368636@@127.0.0.1@3306@biblio
--- Active: 1656402368636@@127.0.0.1@3306@biblio
-/* 2022-05-24 16:40:08 [2648 ms] */ 
-CREATE DATABASE test;
-/* 2022-05-24 16:46:56 [2 ms] */ 
-SELECT NOW();
-/* 2022-05-24 16:48:59 [2 ms] */ 
-CREATE DATABASE NOUVEAU;
-/* 2022-05-24 16:55:56 [5 ms] */ 
-CREATE DATABASE NEW;
-/* 2022-05-24 16:59:29 [3 ms] */ 
-CREATE DATABASE nouvle;
-/* 2022-06-27 13:02:53 [717 ms] */ 
-CREATE DATABASE librairie
-    DEFAULT CHARACTER SET = 'utf8mb4';
-/* 2022-06-27 13:04:23 [136 ms] */ 
-DROP DATABASE librairie;
-/* 2022-06-27 13:04:45 [162 ms] */ 
-CREATE DATABASE librairie;
-/* 2022-06-27 13:08:40 [134 ms] */ 
-DROP DATABASE librairie;
-/* 2022-06-27 13:08:52 [60 ms] */ 
-drop database if exists biblio;
-/* 2022-06-27 13:10:30 [90 ms] */ 
+--Creation de la base de données BIBLIO
 create database biblio;
-/* 2022-06-27 13:10:44 [4 ms] */ 
+/*On va utiliser ce base de données tout au long de 
+l'évaluation */ 
 use biblio;
-/* 2022-06-27 13:12:23 [474 ms] */ 
+/* Création de la table oeuvres dans la base*/ 
 CREATE TABLE oeuvres(
 	NO 		integer primary key auto_increment,
 	titre 		varchar(150) not null,
@@ -33,13 +11,13 @@ CREATE TABLE oeuvres(
 	annee		integer,
 	genre		varchar(30)
 ) ENGINE InnoDB;
-/* 2022-06-27 13:12:40 [534 ms] */ 
+/* Création de la table livres dans la base*/ 
 CREATE TABLE livres (
 	NL		integer primary key auto_increment,
 	editeur		varchar(50),
 	NO		integer not null, foreign key(NO) references oeuvres(NO)
 ) ENGINE InnoDB;
-/* 2022-06-27 13:13:01 [754 ms] */ 
+/* Création de la table adhérents dans la base */ 
 CREATE TABLE adherents (
 	NA		INT PRIMARY KEY AUTO_INCREMENT,
 	nom		VARCHAR(30) not null,
@@ -47,7 +25,7 @@ CREATE TABLE adherents (
 	adr		VARCHAR(100) not null,
 	tel		CHAR(10)
 ) ENGINE InnoDB;
-/* 2022-06-27 13:13:16 [620 ms] */ 
+/* Création de la table emprunter*/ 
 CREATE TABLE emprunter (
 	NL		integer not null, foreign key(NL) references livres(NL),
 	dateEmp		date not null,
@@ -57,7 +35,8 @@ CREATE TABLE emprunter (
 	primary key (NL, dateEmp),
 	index(dateEmp)
 ) ENGINE InnoDB;
-/* 2022-06-27 13:13:20 [266 ms] */ 
+/* Insertion des données(les valeurs des oeuvres existants) 
+dans la table oeuvres par la commande INSERT INTO*/ 
 INSERT INTO oeuvres VALUES 
 (1,'Narcisse et Goldmund','Hermann HESSE', 1930, 'Roman'),
 (2,'Bérénice','Jean RACINE', 1670, 'Théâtre'),
@@ -77,7 +56,7 @@ INSERT INTO oeuvres VALUES
 (16,'Penser la logique','Gilbert HOTTOIS', 1989, 'Philosophie'),
 (17,'Au coeur des ténèbres','Joseph CONRAD',1899, 'Roman'),
 (18,'Jan Karski','Yannick HAENEL', 2009, 'Roman');
-/* 2022-06-27 13:13:24 [100 ms] */ 
+/* Insertion des adherents de la bibliotheque*/ 
 INSERT INTO adherents VALUES 
 (1,'Lecoeur','Jeanette','16 rue de la République, 75010 Paris','0145279274'),
 (2,'Lecoeur','Philippe','16 rue de la République, 75010 Paris','0145279274'),
@@ -109,7 +88,7 @@ INSERT INTO adherents VALUES
 (28,'Frederic','Cyril','15 rue du Simplon, 75018 Paris','0173625492'),
 (29,'Crestard','Cedric','5 rue Doudeauville, 75018 Paris','0629485700'),
 (30,'Le Bihan','Karine','170 bis rue Ordener, 75018 Paris','0638995221');
-/* 2022-06-27 13:13:28 [95 ms] */ 
+/* Insertion des colonnes et valeurs dans livres */ 
 INSERT INTO livres VALUES 
 (1,'GF',1),
 (2,'FOLIO',2),
@@ -143,7 +122,7 @@ INSERT INTO livres VALUES
 (30,'HACHETTE',14),
 (31,'FOLIO',17),
 (32,'GALLIMARD',18);
-/* 2022-06-27 13:13:31 [117 ms] */ 
+/* Insertion des actions enregistre dans la table emprunter */ 
 INSERT INTO emprunter VALUES 
 (1,from_days(to_days(current_date)-350),21,from_days(to_days(current_date)-349),26),
 (4,from_days(to_days(current_date)-323),21,from_days(to_days(current_date)-310),4),
@@ -179,19 +158,16 @@ INSERT INTO emprunter VALUES
 (21,from_days(to_days(current_date)-1),14, NULL,20),
 (32,from_days(to_days(current_date)-1),14, NULL,20);
 
-/*2. Correction des erreurs : expliquer les corrections que vous apportez.*/
+/*2. Correction des erreurs : 
+explications: dans la requete ci-dessus pour NL=12 et NL=26 
+,les dates étaient inverser(LE RETOUR DES LIVRES EST FAIT AVANT SON EMPRUNT) 
+donc on a fait la modification pour regler tous ca.*/
 UPDATE emprunter SET dateEmp = from_days(to_days(current_date) -1290),
 dateRet = from_days(to_days(current_date)-300)
 where NL= 12;
 UPDATE emprunter SET dateEmp = from_days(to_days(current_date)-318),
 dateRet = from_days(to_days(current_date)-315)
 where NL= 26;
-
-/*3. Nombres des tuples dans la table résultat de la requête suivante juste
-après exécution du script de création des tables et des tuples.*/
-
-
-
 
 
 /*6. les livres actuellement empruntés*/ 
@@ -201,19 +177,18 @@ SELECT distinct titre FROM biblio.oeuvres, biblio.emprunter,biblio.livres
 WHERE  livres.NO = oeuvres.NO and  livres.NL = emprunter.NL and emprunter.dateRet != from_days(to_days(current_date));
 
 
-/* 7les livres empruntés par Jeannette Lecoeur ? Vérifier dans la réponse
-qu’il n’y a pas d’homonymes.*/ 
+/* 7.les livres empruntés par Jeannette Lecoeur.*/ 
 SELECT distinct titre,nom,prenom FROM biblio.adherents,biblio.emprunter,biblio.oeuvres,biblio.livres
 where emprunter.NA=adherents.NA and livres.NO = oeuvres.NO and  livres.NL = emprunter.NL and adherents.NA = 1;
 
 
-/* 8les livres empruntés en septembre 2021 */ 
+/* 8.les livres empruntés en septembre 2021 */ 
 select distinct titre from oeuvres,livres,emprunter
 where dateEmp between '2021-09-01' and '2021-09-30'
 and oeuvres.NO = livres.NO and livres.NL = emprunter.NL ;
 
 
-/* 9les adhérents qui ont emprunté un livre de Fedor Dostoievski.*/ 
+/* 9.les adhérents qui ont emprunté un livre de Fedor Dostoievski.*/ 
 SELECT nom,prenom FROM oeuvres,adherents,emprunter,livres
 where auteur = 'Fedor DOSTOIEVSKI' and oeuvres.NO = livres.NO and adherents.NA = emprunter.NA 
 and  livres.NL = emprunter.NL ;
@@ -317,10 +292,16 @@ WHERE dateRet is not null;
 
 
 /*23.Durée moyenne des retards pour l’ensemble des emprunts.*/
-select AVG(datediff(dateRet,dateEmp)) AS durMoy,NL FROM emprunter;
-
+select avg(datediff(dateRet,dateEmp)-dureeMax) AS durMoy FROM emprunter;
 
 /*24.Durée moyenne des retards parmi les seuls retardataires*/
+select AVG(datediff(dateRet,dateEmp)>dureeMax)AS durMoy FROM emprunter;
+
+
+
+
+
+
 
 
 
